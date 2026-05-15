@@ -603,9 +603,8 @@ body{font-family:'Sarabun','Noto Serif TC',sans-serif;
     </div>
     <div class="modal-field"><label class="modal-lbl" id="m-lbl-note">หมายเหตุ</label><input class="modal-inp" id="mNote" placeholder=""></div>
     <div class="modal-actions">
-      <button class="btn-cancel" onclick="close
-/* ── DEBUG: Show real errors ── */
-<script>
+      <button class="btn-cancel" onclick="closeBackup()"><script>
+
 window.onerror=function(m,s,l,c,e){console.error("ERR:",m,l,c,e&&e.stack);return false;};
 try{window.addEventListener('unhandledrejection',function(e){try{e.preventDefault();}catch(_){}});}catch(_){}
 
@@ -1845,6 +1844,7 @@ document.addEventListener('keydown',function(e){
 
 /* ══ INIT ══ */
 try{applyLoginLang();}catch(_){}
+
 
 
 
