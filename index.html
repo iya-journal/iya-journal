@@ -606,7 +606,7 @@ body{font-family:'Sarabun','Noto Serif TC',sans-serif;
       <button class="btn-cancel" onclick="close
 /* ── DEBUG: Show real errors ── */
 <script>
-window.onerror=function(){return true;};
+window.onerror=function(m,s,l,c,e){console.error("ERR:",m,l,c,e&&e.stack);return false;};
 try{window.addEventListener('unhandledrejection',function(e){try{e.preventDefault();}catch(_){}});}catch(_){}
 
 /* ══════════════════════════════════════════
@@ -794,21 +794,15 @@ function isArtifactEnv(){
 }
 
 function apiCall(data, cb) {
-  // 在 Artifact/iframe 環境，fetch 被 CSP 阻擋，改用純 localStorage
-  if(isArtifactEnv()){
-    handleLocalAction(data, cb);
-    return;
-  }
-  try{
-    fetch(API, {method:'POST', body:JSON.stringify(data)})
-      .then(function(r){ return r.json(); })
-      .then(function(d){ if(cb) cb(d); })
-      .catch(function(e){ 
-        // fetch 失敗時回退到 localStorage
-        handleLocalAction(data, cb);
-      });
-  }catch(e){
-    handleLocalAction(data, cb);
+  // 永遠先用 localStorage（速度快，一定成功）
+  handleLocalAction(data, cb);
+  // 同時嘗試同步到 Google Sheets（背景執行，失敗不影響主功能）
+  if(!isArtifactEnv() && (data.action==='saveData'||data.action==='register'||data.action==='resetPassword')){
+    try{
+      fetch(API, {method:'POST', body:JSON.stringify(data)})
+        .then(function(r){return r.json();})
+        .catch(function(){});
+    }catch(_){}
   }
 }
 
@@ -1851,6 +1845,8 @@ document.addEventListener('keydown',function(e){
 
 /* ══ INIT ══ */
 try{applyLoginLang();}catch(_){}
+
+
 
 
 
